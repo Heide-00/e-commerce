@@ -1,39 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import './index.css';
-import { ToastContainer, toast } from 'react-toastify';
-
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import TopBar from "./layout/TopBar";
+import Header from "./layout/Header";
+import HomePage from "./pages/HomePage";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1  className="text-3xl font-bold text-blue-600">Hello</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      <ToastContainer position="top-right" autoClose={3000} />
-    </>
-  )
+    <BrowserRouter>
+      <div className="w-full">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20">
+          <TopBar />
+          <Header />
+        </div>
+          <Switch>
+          <Route exact path="/" component={HomePage} />
+          </Switch>
+        </div>
+    </BrowserRouter>
+  );
 }
-
-export default App
+export default App;
