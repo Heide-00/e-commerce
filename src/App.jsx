@@ -1,7 +1,11 @@
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import TopBar from "./layout/TopBar";
 import Header from "./layout/Header";
+//import Footer from "./layout/Footer";
 import HomePage from "./pages/HomePage";
+import ShopPage from "./pages/ShopPage";
+
+
 
 function App() {
   return (
@@ -13,9 +17,20 @@ function App() {
         </div>
           <Switch>
           <Route exact path="/" component={HomePage} />
+            <Route path="/shop" component={ShopPage} />
           </Switch>
+         {/*} <Footer/>*/}
         </div>
     </BrowserRouter>
   );
 }
 export default App;
+
+
+
+
+
+
+
+
+
