@@ -5,4 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: './',
-})
+  test: {
+    environment: 'jsdom', // ← DOM hatasını çözen kritik satır
+    globals: true,         // test ve expect gibi global fonksiyonları tanır
+  }
+ }) 
