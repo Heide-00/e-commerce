@@ -22,7 +22,6 @@ export default function BlogCard({ image, title, tags, date, comments, descripti
         </div>
 
         <p className="text-sm text-gray-600">{description}</p>
-
         <div className="flex flex-wrap gap-4 text-xs text-gray-500 mt-2">
           <span className="flex items-center gap-1">
             <Timer className="w-4 h-4 text-blue-500" />
