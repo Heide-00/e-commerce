@@ -1,7 +1,7 @@
-import TopBar from "../layout/TopBar";
+//import TopBar from "../layout/TopBar";
 import Header from "../layout/Header";
 import HeroSlider from "../components/HeroSlider";
-import PageContent from "../layout/PageContent";
+//import PageContent from "../layout/PageContent";
 import ProductSection from "../components/ProductSection";
 import CategorySection from "../components/CategorySection";
 import SliderSection from "../components/SliderSection";
@@ -26,3 +26,8 @@ export default function HomePage() {
      </div>
   );
 }
+
+
+
+
+
