@@ -9,10 +9,15 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm w-full">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 flex flex-col md:flex-row items-center justify-between gap-4 py-4">
-        <Link to="/" className="text-2xl font-bold text-black">Bandage</Link>
-          <nav className="flex flex-wrap gap-4 text-sm items-center">
+        
+        <Link to="/" className="text-2xl font-bold text-black">
+          Bandage
+        </Link>
+
+        <nav className="flex flex-wrap gap-4 text-sm items-center">
           <Link to="/" className="text-black hover:text-blue-600 transition">Home</Link>
-            <div className="relative">
+
+          <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-1 text-sm text-black hover:text-blue-600 transition"
@@ -27,11 +32,13 @@ export default function Header() {
               </div>
             )}
           </div>
+
           <Link to="/about" className="text-black hover:text-blue-600 transition">About</Link>
           <Link to="/blog" className="text-black hover:text-blue-600 transition">Blog</Link>
           <Link to="/contact" className="text-black hover:text-blue-600 transition">Contact</Link>
           <Link to="/pages" className="text-black hover:text-blue-600 transition">Pages</Link>
         </nav>
+
         <div className="flex items-center gap-4">
           <Link to="/login" className="flex items-center gap-1 text-sm text-blue-600 hover:underline">
             <User className="w-4 h-4" />
