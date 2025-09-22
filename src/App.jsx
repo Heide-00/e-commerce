@@ -1,10 +1,12 @@
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import TopBar from "./layout/TopBar";
 import Header from "./layout/Header";
-import Footer from "./layout/Footer"; 
+import Footer from "./layout/Footer";
+
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";
 import ProductDetail from "./pages/ProductDetail";
+import ContactPage from "./pages/ContactPage"; 
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
             <Route exact path="/" component={HomePage} />
             <Route path="/shop" component={ShopPage} />
             <Route path="/product/:id" component={ProductDetail} />
+            <Route path="/contact" component={ContactPage} /> 
           </Switch>
 
           <Footer />
