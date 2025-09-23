@@ -14,7 +14,7 @@ export default function Header() {
           Bandage
         </Link>
 
-        <nav className="flex flex-wrap gap-4 text-sm items-center">
+        <nav className="flex flex-col md:flex-row gap-2 md:gap-4 text-sm items-start md:items-center">
           <Link to="/" className="text-black hover:text-blue-600 transition">Home</Link>
 
           <div className="relative">
@@ -37,6 +37,8 @@ export default function Header() {
           <Link to="/blog" className="text-black hover:text-blue-600 transition">Blog</Link>
           <Link to="/contact" className="text-black hover:text-blue-600 transition">Contact</Link>
           <Link to="/pages" className="text-black hover:text-blue-600 transition">Pages</Link>
+          <Link to="/team" className="text-black hover:text-blue-600 transition">Team</Link>
+
         </nav>
 
         <div className="flex items-center gap-4">
@@ -58,6 +60,11 @@ export default function Header() {
     </header>
   );
 }
+
+
+
+
+
 
 
 
