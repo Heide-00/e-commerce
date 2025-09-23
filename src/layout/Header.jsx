@@ -39,7 +39,7 @@ export default function Header() {
               <ChevronDown className={`w-4 h-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} />
             </button>
             {isDropdownOpen && (
-              <div className="absolute left-0 top-full mt-2 z-50 bg-white shadow-lg rounded-md w-48">
+              <div className="absolute left-0 top-full mt-2 z-50 bg-white shadow-lg rounded-md min-w-[260px]">
                 <ShopDropdown />
               </div>
             )}
@@ -50,6 +50,8 @@ export default function Header() {
           <Link to="/contact" className="text-black hover:text-blue-600 transition">Contact</Link>
           <Link to="/pages" className="text-black hover:text-blue-600 transition">Pages</Link>
           <Link to="/team" className="text-black hover:text-blue-600 transition">Team</Link>
+          <Link to="/signup" className="text-sm text-black-600">Sign Up</Link>
+
         </nav>
 
         <div className="flex flex-wrap justify-end gap-2 md:gap-4">
