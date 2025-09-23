@@ -8,6 +8,7 @@ import ProductDetail from "./pages/ProductDetail";
 import ContactPage from "./pages/ContactPage";
 import TeamPage from "./pages/TeamPage";
 import AboutPage from "./pages/AboutPage"; 
+import SignupPage from "./pages/SignupPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/contact" component={ContactPage} />
             <Route path="/team" component={TeamPage} />
             <Route path="/about" component={AboutPage} /> 
+            <Route path="/signup" component={SignupPage} />
           </Switch>
 
           <Footer />
