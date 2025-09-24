@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
-import { products } from "../components/ProductSection";
+//import { products } from "../components/ProductSection";
+import { products } from "../mock/products.js";
 
 export default function ProductDetail() {
   const { id } = useParams();
