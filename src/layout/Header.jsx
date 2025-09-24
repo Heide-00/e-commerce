@@ -1,11 +1,21 @@
-import { ShoppingCart, Heart, User, Search, ChevronDown } from "lucide-react";
+import {
+  ShoppingCart,
+  Heart,
+  User,
+  Search,
+  ChevronDown
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import ShopDropdown from "../components/ShopDropdown";
 
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef();
+
+  const cart = useSelector((state) => state.cart.cart);
+  const cartCount = cart.reduce((total, item) => total + item.count, 0);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -21,14 +31,16 @@ export default function Header() {
     <header className="bg-white shadow-sm w-full">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 flex flex-col md:flex-row items-center justify-between gap-4 py-4">
 
+        {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-black">
           Bandage
         </Link>
 
-      <nav className="flex flex-col md:flex-row gap-2 md:gap-4 text-sm items-start md:items-center">
+        {/* Navigation */}
+        <nav className="flex flex-col md:flex-row gap-2 md:gap-4 text-sm items-start md:items-center">
           <Link to="/" className="text-black hover:text-blue-600 transition">Home</Link>
 
-        <div className="relative" ref={dropdownRef}>
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-1 text-sm text-black hover:text-blue-600 transition"
@@ -51,19 +63,19 @@ export default function Header() {
           <Link to="/pages" className="text-black hover:text-blue-600 transition">Pages</Link>
           <Link to="/team" className="text-black hover:text-blue-600 transition">Team</Link>
           <Link to="/signup" className="text-sm text-black-600">Sign Up</Link>
-
         </nav>
 
+        {/* Icons */}
         <div className="flex flex-wrap justify-end gap-2 md:gap-4">
           <Link to="/login" className="flex items-center gap-1 text-sm text-blue-600 hover:underline">
             <User className="w-4 h-4" />
             Login / Register
           </Link>
           <Search className="w-5 h-5 text-blue-600 cursor-pointer" />
-          <div className="flex items-center gap-1">
+          <Link to="/cart" className="flex items-center gap-1">
             <ShoppingCart className="w-5 h-5 text-blue-600" />
-            <span className="text-sm font-medium text-blue-600">1</span>
-          </div>
+            <span className="text-sm font-medium text-blue-600">{cartCount}</span>
+          </Link>
           <div className="flex items-center gap-1">
             <Heart className="w-5 h-5 text-blue-600" />
             <span className="text-sm font-medium text-blue-600">1</span>
