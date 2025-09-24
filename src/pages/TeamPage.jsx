@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRolesIfNeeded } from "../store/thunks/fetchRoles";
 import PageContent from "../layout/PageContent";
 import { Linkedin } from "lucide-react";
 import menImage from "../assets/images/team/kod-men.png";
@@ -10,7 +13,7 @@ const team = [
     name: "Gökhan Özdemir",
     title: "Project Manager",
     image: menImage,
-    linkedin: "https://www.linkedin.com", 
+    linkedin: "https://www.linkedin.com",
   },
   {
     name: "Gül Aslan",
@@ -33,29 +36,41 @@ const team = [
 ];
 
 export default function TeamPage() {
+  const dispatch = useDispatch();
+  const roles = useSelector((state) => state.client.roles);
+
+  useEffect(() => {
+    dispatch(fetchRolesIfNeeded());
+  }, [dispatch]);
+
   return (
     <PageContent title="Ekibimiz">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {team.map((member, index) => (
           <div
             key={index}
-            className="flex flex-col items-center text-center p-4 border rounded shadow-sm hover:shadow-md transition"
+            className="flex flex-col items-center text-center p-6 border rounded-lg shadow-sm hover:shadow-md transition"
           >
             <img
               src={member.image}
               alt={member.name}
-              className="w-24 h-24 rounded-full object-contain mb-2 bg-white"
+              className="w-24 h-24 rounded-full object-cover mb-3 border"
             />
-            <h3 className="text-lg font-semibold">{member.name}</h3>
-            <p className="text-sm text-gray-600">{member.title}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{member.name}</h3>
+            <p className="text-sm text-gray-500">{member.title}</p>
             <a
               href={member.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-500 mt-2 hover:text-blue-600 transition"
+              className="mt-2 text-blue-500 hover:text-blue-600 transition"
             >
               <Linkedin className="w-5 h-5" />
             </a>
+            {roles.length > 0 && (
+              <p className="text-xs text-gray-400 mt-1">
+                Rol verisi yüklendi: {roles.length} adet rol
+              </p>
+            )}
           </div>
         ))}
       </div>
