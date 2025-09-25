@@ -1,3 +1,7 @@
+import axiosInstance, { setAuthToken } from '../../api/axiosInstance';
+import { toast } from 'react-toastify';
+
+// Redux action creators
 export const setUser = (user) => ({
   type: 'SET_USER',
   payload: user
@@ -28,29 +32,33 @@ export const setCreditCards = (cards) => ({
   payload: cards
 });
 
-
-import axios from 'axios';
-import { toast } from 'react-toastify';
-
+// Login thunk
 export const loginThunk = (formData) => async (dispatch) => {
   try {
-    const res = await axios.post('http://localhost:3000/login', {
+    const res = await axiosInstance.post('/login', {
       email: formData.email,
       password: formData.password
     });
 
     const { token, user } = res.data;
 
+    // Token'ı axios header'a ekle
+    setAuthToken(token);
+
+    // Eğer "Beni Hatırla" seçiliyse token'ı localStorage'a yaz
     if (formData.rememberMe) {
       localStorage.setItem('token', token);
     }
 
-    dispatch(setUser(user)); 
+    // Redux'a kullanıcıyı yaz
+    dispatch(setUser(user));
 
     toast.success('Giriş başarılı!');
-    window.history.length > 1 
-    ? window.history.back() 
-    : window.location.href = '/';
+
+    // Yönlendirme
+    window.history.length > 1
+      ? window.history.back()
+      : window.location.href = '/';
   } catch (err) {
     toast.error('Giriş başarısız!');
   }
