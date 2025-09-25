@@ -8,6 +8,7 @@ import {
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+import Gravatar from "react-gravatar";
 import ShopDropdown from "../components/ShopDropdown";
 
 export default function Header() {
@@ -16,6 +17,8 @@ export default function Header() {
 
   const cart = useSelector((state) => state.cart.cart);
   const cartCount = cart.reduce((total, item) => total + item.count, 0);
+
+  const user = useSelector((state) => state.client.user); 
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -65,12 +68,20 @@ export default function Header() {
           <Link to="/signup" className="text-sm text-black-600">Sign Up</Link>
         </nav>
 
-        {/* Icons */}
-        <div className="flex flex-wrap justify-end gap-2 md:gap-4">
-          <Link to="/login" className="flex items-center gap-1 text-sm text-blue-600 hover:underline">
-            <User className="w-4 h-4" />
-            Login / Register
-          </Link>
+        {/* Icons & Kullanıcı */}
+        <div className="flex flex-wrap justify-end gap-2 md:gap-4 items-center">
+          {user ? (
+            <div className="flex items-center gap-2">
+              <Gravatar email={user.email} className="rounded-full w-8 h-8" />
+              <span className="text-sm font-medium text-blue-600">{user.name}</span>
+            </div>
+          ) : (
+            <Link to="/login" className="flex items-center gap-1 text-sm text-blue-600 hover:underline">
+              <User className="w-4 h-4" />
+              Login / Register
+            </Link>
+          )}
+
           <Search className="w-5 h-5 text-blue-600 cursor-pointer" />
           <Link to="/cart" className="flex items-center gap-1">
             <ShoppingCart className="w-5 h-5 text-blue-600" />
