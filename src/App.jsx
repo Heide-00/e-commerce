@@ -28,21 +28,21 @@ function App() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    //Token'ı axios header'a ekle
+    // Token'ı axios header'a ekle
     setAuthToken(token);
 
-    //Token doğrulama isteği
+    // Token doğrulama isteği
     axiosInstance.get("/verify")
       .then((res) => {
-        //Redux'a kullanıcıyı yaz
+        // Redux'a kullanıcıyı yaz
         dispatch(setUser(res.data.user));
 
-        //Token'ı yenile
+        // Token'ı yenile
         localStorage.setItem("token", "mock-token-123");
         setAuthToken("mock-token-123");
       })
       .catch(() => {
-        //Token geçersizse temizle
+        // Token geçersizse temizle
         localStorage.removeItem("token");
         clearAuthToken();
         dispatch({ type: "CLEAR_USER" });
@@ -85,6 +85,17 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
