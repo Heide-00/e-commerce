@@ -27,6 +27,10 @@ app.post("/signup", (req, res) => {
   const { name, email, password } = req.body;
   console.log("Signup verisi:", req.body);
 
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "Eksik bilgi gönderildi" });
+  }
+
   const existingUser = users.find(u => u.email === email);
   if (existingUser) {
     return res.status(400).json({ error: "Email already exists" });
@@ -52,7 +56,7 @@ app.post("/signup", (req, res) => {
   });
 });
 
-//Login endpoint
+// Login endpoint
 app.post("/login", (req, res) => {
   console.log("Login verisi:", req.body);
 
@@ -80,7 +84,7 @@ app.get("/verify", (req, res) => {
   console.log("Verify token:", token);
 
   if (token === "mock-token-123") {
-    const user = users[0]; 
+    const user = users[0];
     return res.status(200).json({
       user: {
         id: 1,
@@ -94,7 +98,36 @@ app.get("/verify", (req, res) => {
   return res.status(401).json({ error: "Token geçersiz" });
 });
 
-//Sunucuyu başlat
+// Role ID'ye göre veri dönen endpoint
+app.get("/roles/:id", (req, res) => {
+  const { id } = req.params;
+  const index = parseInt(id, 10) - 1;
+
+  if (index >= 0 && index < users.length) {
+    const user = users[index];
+    return res.status(200).json({ role: user.role });
+  }
+
+  return res.status(404).json({ error: `Role with ID ${id} not found` });
+});
+
+// Tüm rollerin listesini dönen endpoint
+app.get("/roles", (req, res) => {
+  const roles = users.map((user, index) => ({
+    id: index + 1,
+    email: user.email,
+    role: user.role
+  }));
+
+  return res.status(200).json({ roles });
+});
+
+// Ana sayfa isteği varsa 404 yerine yanıt dönsün
+app.get("/", (req, res) => {
+  res.send("Backend çalışıyor");
+});
+
+// Sunucuyu başlat
 app.listen(PORT, () => {
   console.log(`Backend çalışıyor: http://localhost:${PORT}`);
 });
