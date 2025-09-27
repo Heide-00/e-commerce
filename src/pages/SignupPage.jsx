@@ -1,5 +1,7 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getRoles } from "../redux/clientSlice";
 import axiosInstance from "../api/axiosInstance";
 import { useHistory } from "react-router-dom";
 
@@ -12,17 +14,23 @@ export default function SignupPage() {
     formState: { errors, isSubmitting }
   } = useForm();
 
-  const [roles, setRoles] = useState([]);
+  const dispatch = useDispatch();
   const history = useHistory();
+  const roles = useSelector((state) => state.client.roles);
   const selectedRoleId = watch("role_id");
 
+  // Rolleri Redux üzerinden çek
   useEffect(() => {
-    axiosInstance.get("/roles").then((res) => {
-      setRoles(res.data);
-      const customer = res.data.find((r) => r.name === "Customer");
+    dispatch(getRoles());
+  }, [dispatch]);
+
+  // "Customer" rolünü varsayılan olarak seç
+  useEffect(() => {
+    if (Array.isArray(roles)) {
+      const customer = roles.find((r) => r.name === "Customer");
       if (customer) setValue("role_id", customer.id);
-    });
-  }, [setValue]);
+    }
+  }, [roles, setValue]);
 
   const onSubmit = async (data) => {
     try {
@@ -100,9 +108,10 @@ export default function SignupPage() {
       {errors.password_confirm && <span className="text-red-500 text-sm">Şifreler eşleşmiyor</span>}
 
       <select {...register("role_id", { required: true })} className="border p-2 rounded w-full">
-        {roles.map((role) => (
-          <option key={role.id} value={role.id}>{role.name}</option>
-        ))}
+        {Array.isArray(roles) &&
+          roles.map((role) => (
+            <option key={role.id} value={role.id}>{role.name}</option>
+          ))}
       </select>
 
       {Number(selectedRoleId) === 2 && (
@@ -149,3 +158,4 @@ export default function SignupPage() {
     </form>
   );
 }
+      
