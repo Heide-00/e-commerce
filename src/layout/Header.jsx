@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import Gravatar from "react-gravatar";
-import ShopDropdown from "../components/ShopDropdown";
+import ShopDropdown from "../layout/ShopDropdown";
 
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -18,7 +18,7 @@ export default function Header() {
   const cart = useSelector((state) => state.cart.cart);
   const cartCount = cart.reduce((total, item) => total + item.count, 0);
 
-  const user = useSelector((state) => state.client.user); 
+  const user = useSelector((state) => state.client.user);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -96,6 +96,14 @@ export default function Header() {
     </header>
   );
 }
+
+
+
+
+
+
+
+
 
 
 
