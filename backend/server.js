@@ -6,13 +6,52 @@ const PORT = 3000;
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // JSON body'leri alabilmek için
+app.use(express.json());
 
 // Mock kullanıcı listesi
 let users = [
   { email: "customer@commerce.com", password: "123456", role: "user" },
   { email: "store@commerce.com", password: "123456", role: "store" },
   { email: "admin@commerce.com", password: "123456", role: "admin" }
+];
+
+// Mock kategori listesi
+const categories = [
+  {
+    id: 1,
+    name: "bags",
+    gender: "women",
+    rating: 4.8,
+    image: "bags.png"
+  },
+  {
+    id: 2,
+    name: "belts",
+    gender: "women",
+    rating: 4.6,
+    image: "belts.png"
+  },
+  {
+    id: 3,
+    name: "cosmetics",
+    gender: "women",
+    rating: 4.9,
+    image: "/assets/images/categories/cosmetics.png"
+  },
+  {
+    id: 4,
+    name: "bags",
+    gender: "men",
+    rating: 4.7,
+    image: "bags.png"
+  },
+  {
+    id: 5,
+    name: "hats",
+    gender: "men",
+    rating: 4.5,
+    image: "hats.png"
+  }
 ];
 
 // Role belirleme fonksiyonu
@@ -122,6 +161,11 @@ app.get("/roles", (req, res) => {
   return res.status(200).json({ roles });
 });
 
+// Kategori listesini dönen endpoint
+app.get("/categories", (req, res) => {
+  res.status(200).json(categories);
+});
+
 // Ana sayfa isteği varsa 404 yerine yanıt dönsün
 app.get("/", (req, res) => {
   res.send("Backend çalışıyor");
@@ -131,3 +175,15 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Backend çalışıyor: http://localhost:${PORT}`);
 });
+
+
+
+              
+ 
+
+
+
+
+
+      
+ 
