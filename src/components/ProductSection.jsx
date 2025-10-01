@@ -12,6 +12,8 @@ export default function ProductSection() {
     dispatch(fetchProductsIfNeeded());
   }, [dispatch]);
 
+  const homepageProducts = productList.filter((item) => item.id <= 7);
+
   return (
     <section className="w-full px-4 pt-4 pb-15">
       <div className="text-center mb-8">
@@ -30,13 +32,13 @@ export default function ProductSection() {
         <p className="text-center text-red-500">Ürünler alınamadı. Lütfen tekrar deneyin.</p>
       )}
 
-      {fetchState === "FETCHED" && productList.length === 0 && (
+      {fetchState === "FETCHED" && homepageProducts.length === 0 && (
         <p className="text-center text-gray-500">Hiç ürün bulunamadı.</p>
       )}
 
-      {fetchState === "FETCHED" && productList.length > 0 && (
+      {fetchState === "FETCHED" && homepageProducts.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {productList.map((item) => (
+          {homepageProducts.map((item) => (
             <ProductCard key={item.id} {...item} />
           ))}
         </div>
