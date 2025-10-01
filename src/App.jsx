@@ -3,11 +3,9 @@ import { useDispatch } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import TopBar from "./layout/TopBar";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
-
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";
 import ProductDetail from "./pages/ProductDetail";
@@ -17,9 +15,9 @@ import AboutPage from "./pages/AboutPage";
 import SignupPage from "./pages/SignupPage";
 import CartPage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
-
 import axiosInstance, { setAuthToken, clearAuthToken } from "./api/axiosInstance";
 import { setUser } from "./store/actions/clientActions";
+import CategoryPage from "./pages/CategoryPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -55,10 +53,10 @@ function App() {
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20">
           <TopBar />
           <Header />
-
           <Switch>
             <Route exact path="/" component={HomePage} />
-            <Route path="/shop" component={ShopPage} />
+            <Route exact path="/shop" component={ShopPage} />
+            <Route path="/shop/:gender/:categoryName/:categoryId" component={CategoryPage} />
             <Route path="/product/:id" component={ProductDetail} />
             <Route path="/contact" component={ContactPage} />
             <Route path="/team" component={TeamPage} />
@@ -66,13 +64,11 @@ function App() {
             <Route path="/signup" component={SignupPage} />
             <Route path="/cart" component={CartPage} />
             <Route path="/login" component={LoginPage} />
-          </Switch>
-
-          <Footer />
+           </Switch>
+           <Footer />
         </div>
       </div>
-
-      <ToastContainer
+    <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -85,6 +81,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 
