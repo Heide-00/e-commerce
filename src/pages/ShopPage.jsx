@@ -1,6 +1,6 @@
-import { useParams, useHistory } from "react-router-dom";
-import { useState } from "react";
-import { products } from "../mock/products";
+import { useParams, useHistory, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "../api/axiosInstance";
 import ProductCard from "../components/ProductCard";
 
 const categories = [
@@ -12,21 +12,43 @@ const categories = [
 
 export default function ShopPage() {
   const history = useHistory();
-  const { gender, categoryName } = useParams();
-  const [selectedCategory, setSelectedCategory] = useState(categoryName || "bags");
+  const location = useLocation();
+  const { gender, categoryName, categoryId } = useParams();
 
+  // Query parametrelerini URL'den alma
+  const queryParams = new URLSearchParams(location.search);
+  const initialFilter = queryParams.get("filter") || "";
+  const initialSort = queryParams.get("sort") || "";
+
+  const [products, setProducts] = useState([]);
+  const [filter, setFilter] = useState(initialFilter);
+  const [sort, setSort] = useState(initialSort);
+
+  // Kategori değiştiğinde yönlendirme
   const handleCategoryClick = (category) => {
-    const gender = "women"; 
-    setSelectedCategory(category.name);
-    history.push(`/shop/${gender}/${category.name}/${category.id}`);
+    queryParams.set("filter", filter);
+    queryParams.set("sort", sort);
+    history.push(`/shop/${gender}/${category.name}/${category.id}?${queryParams.toString()}`);
   };
 
-  const filteredProducts = products.filter(
-    (p) =>
-      p.id >= 8 &&
-      p.gender === gender &&
-      p.category === categoryName
-  );
+  // Filtre ve sıralama uygulandığında yönlendirme
+  const handleApplyFilter = () => {
+    queryParams.set("filter", filter);
+    queryParams.set("sort", sort);
+    history.push(`/shop/${gender}/${categoryName}/${categoryId}?${queryParams.toString()}`);
+  };
+
+  // API'den ürünleri çekme
+  useEffect(() => {
+    const query = new URLSearchParams();
+    if (categoryId) query.append("category", categoryId);
+    if (filter) query.append("filter", filter);
+    if (sort) query.append("sort", sort);
+
+    axios.get(`/products?${query.toString()}`)
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error("Ürün çekme hatası:", err));
+  }, [categoryId, filter, sort]);
 
   return (
     <div className="w-full">
@@ -40,7 +62,7 @@ export default function ShopPage() {
               key={category.id}
               onClick={() => handleCategoryClick(category)}
               className={`px-4 py-2 rounded text-sm capitalize ${
-                selectedCategory === category.name
+                categoryName === category.name
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-800"
               }`}
@@ -50,9 +72,37 @@ export default function ShopPage() {
           ))}
         </div>
 
+        {/* Filtre ve Sıralama */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <input
+            type="text"
+            placeholder="Filtrele (örneğin: siyah)"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="border p-2 rounded w-full sm:w-1/2"
+          />
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="border p-2 rounded w-full sm:w-1/2"
+          >
+            <option value="">Sırala</option>
+            <option value="price:asc">Fiyat Artan</option>
+            <option value="price:desc">Fiyat Azalan</option>
+            <option value="rating:asc">Puan Artan</option>
+            <option value="rating:desc">Puan Azalan</option>
+          </select>
+          <button
+            onClick={handleApplyFilter}
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Filtrele
+          </button>
+        </div>
+
         {/* Ürünler */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {filteredProducts.map((item) => (
+          {products.map((item) => (
             <ProductCard key={item.id} product={item} />
           ))}
         </div>
@@ -60,5 +110,4 @@ export default function ShopPage() {
     </div>
   );
 }
-
 
