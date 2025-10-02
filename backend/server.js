@@ -26,19 +26,49 @@ const categories = [
 
 // Mock ürün listesi
 const products = [
-  { id: 1, title: "Çanta", price: 199, image: "bags.png" },
-  { id: 2, title: "Kemer", price: 149, image: "belts.png" },
-  { id: 3, title: "Ruj", price: 89, image: "cosmetics.png" },
-  { id: 4, title: "Şapka", price: 129, image: "hats.png" },
-  { id: 5, title: "Erkek Çanta", price: 219, image: "bags.png" }
+  { id: 1, title: "Kadın Çanta", price: 199, image: "bags.png", categoryId: 2 },
+  { id: 2, title: "Kemer", price: 149, image: "belts.png", categoryId: 2 },
+  { id: 3, title: "Ruj", price: 89, image: "cosmetics.png", categoryId: 3 },
+  { id: 4, title: "Şapka", price: 129, image: "hats.png", categoryId: 5 },
+  { id: 5, title: "Erkek Çanta", price: 219, image: "bags.png", categoryId: 2 }
 ];
 
-// Role belirleme fonksiyonu
-function getUserRole(email) {
-  if (email.includes("admin")) return "admin";
-  if (email.includes("store")) return "store";
-  return "user";
+// Yardımcı fonksiyon: kategori ID'den kategori adını bulma
+function getCategoryNameById(id) {
+  const category = categories.find(c => c.id === Number(id));
+  return category ? category.name : "";
 }
+
+// Ürünleri dönen endpoint (ShopPage ile uyumlu)
+app.get("/products", (req, res) => {
+  const { category, filter, sort } = req.query;
+  let result = [...products];
+
+  if (category) {
+    result = result.filter(p => p.categoryId === Number(category));
+  }
+
+  if (filter) {
+    result = result.filter(p =>
+      p.title.toLowerCase().includes(filter.toLowerCase())
+    );
+  }
+
+  if (sort) {
+    const [key, direction] = sort.split(":");
+    result.sort((a, b) => {
+      if (key === "price") {
+        return direction === "asc" ? a.price - b.price : b.price - a.price;
+      }
+      return 0;
+    });
+  }
+
+  res.status(200).json({
+    total: result.length,
+    products: result
+  });
+});
 
 // Signup endpoint
 app.post("/signup", (req, res) => {
@@ -84,9 +114,11 @@ app.post("/login", (req, res) => {
   return res.status(401).json({ error: "Giriş başarısız" });
 });
 
-// Token doğrulama endpointi
+//Güncellenmiş Token doğrulama endpointi
 app.get("/verify", (req, res) => {
-  const token = req.headers["authorization"];
+  const rawToken = req.headers["authorization"];
+  const token = rawToken?.replace("Bearer ", "");
+
   if (token === "mock-token-123") {
     const user = users[0];
     return res.status(200).json({
@@ -98,6 +130,7 @@ app.get("/verify", (req, res) => {
       }
     });
   }
+
   return res.status(401).json({ error: "Token geçersiz" });
 });
 
@@ -127,25 +160,22 @@ app.get("/categories", (req, res) => {
   res.status(200).json(categories);
 });
 
-// Ürünleri dönen endpoint
-app.get("/products", (req, res) => {
-  res.status(200).json({
-    total: products.length,
-    products
-  });
-});
-
 // Ana sayfa isteği varsa 404 yerine yanıt dönsün
 app.get("/", (req, res) => {
   res.send("Backend çalışıyor");
 });
 
+// Role belirleme fonksiyonu
+function getUserRole(email) {
+  if (email.includes("admin")) return "admin";
+  if (email.includes("store")) return "store";
+  return "user";
+}
+
 // Sunucuyu başlat
 app.listen(PORT, () => {
   console.log(`Backend çalışıyor: http://localhost:${PORT}`);
 });
-
-
 
               
  
