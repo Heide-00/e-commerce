@@ -2,6 +2,7 @@ import { useParams, useHistory, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "../api/axiosInstance";
 import ProductCard from "../components/ProductCard";
+import ReactPaginate from "react-paginate";
 
 const categories = [
   { id: 1, name: "bags" },
@@ -15,7 +16,6 @@ export default function ShopPage() {
   const location = useLocation();
   const { gender, categoryName, categoryId } = useParams();
 
-  // Query parametrelerini URL'den alma
   const queryParams = new URLSearchParams(location.search);
   const initialFilter = queryParams.get("filter") || "";
   const initialSort = queryParams.get("sort") || "";
@@ -23,32 +23,39 @@ export default function ShopPage() {
   const [products, setProducts] = useState([]);
   const [filter, setFilter] = useState(initialFilter);
   const [sort, setSort] = useState(initialSort);
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(0);
+  const limit = 25;
 
-  // Kategori değiştiğinde yönlendirme
   const handleCategoryClick = (category) => {
     queryParams.set("filter", filter);
     queryParams.set("sort", sort);
     history.push(`/shop/${gender}/${category.name}/${category.id}?${queryParams.toString()}`);
+    setPage(0); // kategori değişince sayfayı sıfırla
   };
 
-  // Filtre ve sıralama uygulandığında yönlendirme
   const handleApplyFilter = () => {
     queryParams.set("filter", filter);
     queryParams.set("sort", sort);
     history.push(`/shop/${gender}/${categoryName}/${categoryId}?${queryParams.toString()}`);
+    setPage(0); // filtre değişince sayfayı sıfırla
   };
 
-  // API'den ürünleri çekme
   useEffect(() => {
     const query = new URLSearchParams();
+    query.append("limit", limit);
+    query.append("offset", page * limit);
     if (categoryId) query.append("category", categoryId);
     if (filter) query.append("filter", filter);
     if (sort) query.append("sort", sort);
 
     axios.get(`/products?${query.toString()}`)
-      .then((res) => setProducts(res.data))
+      .then((res) => {
+        setProducts(res.data.products);
+        setTotal(res.data.total);
+      })
       .catch((err) => console.error("Ürün çekme hatası:", err));
-  }, [categoryId, filter, sort]);
+  }, [categoryId, filter, sort, page]);
 
   return (
     <div className="w-full">
@@ -103,9 +110,21 @@ export default function ShopPage() {
         {/* Ürünler */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {products.map((item) => (
-            <ProductCard key={item.id} product={item} />
+            <ProductCard key={item.id} {...item} />
           ))}
         </div>
+
+        {/* Sayfalama */}
+        {total > limit && (
+          <ReactPaginate
+            pageCount={Math.ceil(total / limit)}
+            onPageChange={({ selected }) => setPage(selected)}
+            containerClassName="flex gap-2 mt-6 justify-center"
+            activeClassName="text-blue-500 font-bold"
+            previousLabel="<"
+            nextLabel=">"
+          />
+        )}
       </div>
     </div>
   );
