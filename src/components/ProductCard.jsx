@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setCart } from "../store/actions/cartActions";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/actions/cartActions";
 
 export default function ProductCard({
   id,
@@ -12,23 +12,9 @@ export default function ProductCard({
   colors
 }) {
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cart.cart);
 
   const handleAddToCart = () => {
-    const existingItem = cart.find((item) => item.product.id === id);
-
-    let updatedCart;
-    if (existingItem) {
-      updatedCart = cart.map((item) =>
-        item.product.id === id
-          ? { ...item, count: item.count + 1 }
-          : item
-      );
-    } else {
-      updatedCart = [...cart, { count: 1, product: { id, image, title, price } }];
-    }
-
-    dispatch(setCart(updatedCart));
+    dispatch(addToCart({ id, image, title, price, department, oldPrice, colors }));
   };
 
   return (
