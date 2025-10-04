@@ -19,12 +19,12 @@ export default function SignupPage() {
   const roles = useSelector((state) => state.client.roles);
   const selectedRoleId = watch("role_id");
 
-  // Rolleri Redux üzerinden çek
+  //Rolleri Redux üzerinden çek
   useEffect(() => {
     dispatch(getRoles());
   }, [dispatch]);
 
-  // "Customer" rolünü varsayılan olarak seç
+  //"Customer" rolünü varsayılan olarak seç
   useEffect(() => {
     if (Array.isArray(roles)) {
       const customer = roles.find((r) => r.name === "Customer");
@@ -151,8 +151,8 @@ export default function SignupPage() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-black text-white py-2 px-4 rounded w-full"
-      >
+        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded w-full"
+        >
         {isSubmitting ? "Gönderiliyor..." : "Sign Up"}
       </button>
     </form>
