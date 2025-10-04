@@ -1,13 +1,13 @@
 import {
   setProductList,
   setFetchState,
-  setTotal
+  setTotal,
+  setSelectedProduct 
 } from "../actions/productActions";
 
-// Statik mock veri (ilk yükleme için)
 import { products } from "../../mock/products.js";
 
-//1.Sabit veriyle çalışan ilk yükleme fonksiyonu
+//1.Statik veriyle ilk yükleme
 export const fetchProductsIfNeeded = () => {
   return async (dispatch, getState) => {
     const { productList, fetchState } = getState().product;
@@ -28,13 +28,12 @@ export const fetchProductsIfNeeded = () => {
   };
 };
 
-//2.Dinamik API çağrısı yapan pagination destekli fonksiyon
+//2.Sayfalı API çağrısı
 export const fetchProductsPaginated = ({ limit = 25, offset = 0, category, filter, sort }) => {
   return async (dispatch) => {
     dispatch(setFetchState("FETCHING"));
 
     try {
-      //Parametreleri URL'e dönüştür
       const queryParams = new URLSearchParams();
       queryParams.append("limit", limit);
       queryParams.append("offset", offset);
@@ -51,6 +50,24 @@ export const fetchProductsPaginated = ({ limit = 25, offset = 0, category, filte
     } catch (error) {
       dispatch(setFetchState("FAILED"));
       console.error("Sayfalı ürünler alınamadı:", error);
+    }
+  };
+};
+
+//3.Yeni: Belirli ürün detayını çekme
+export const fetchProductById = (productId) => {
+  return async (dispatch) => {
+    dispatch(setFetchState("FETCHING"));
+
+    try {
+      const res = await fetch(`http://localhost:3000/products/${productId}`);
+      const data = await res.json();
+
+      dispatch(setSelectedProduct(data)); //Detay verisini reducer'a gönderme
+      dispatch(setFetchState("FETCHED"));
+    } catch (error) {
+      dispatch(setFetchState("FAILED"));
+      console.error("Ürün detayı alınamadı:", error);
     }
   };
 };
