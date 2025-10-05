@@ -42,6 +42,16 @@ export default function cartReducer(state = initialState, action) {
         ),
       };
 
+    case 'TOGGLE_CART_ITEM_CHECKED':
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item.product.id === action.payload
+            ? { ...item, checked: !item.checked }
+            : item
+        ),
+      };
+
     case 'REMOVE_FROM_CART':
       return {
         ...state,
