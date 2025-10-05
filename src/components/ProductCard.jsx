@@ -28,15 +28,11 @@ export default function ProductCard({
 
         <div className="flex flex-col gap-1 mt-2">
           <h3 className="text-base font-bold text-gray-900">{title}</h3>
-          {department && (
-            <p className="text-sm text-gray-500">{department}</p>
-          )}
+          {department && <p className="text-sm text-gray-500">{department}</p>}
         </div>
 
         <div className="flex gap-2 items-center justify-center mt-1">
-          {oldPrice && (
-            <span className="text-sm text-gray-400">{oldPrice}</span>
-          )}
+          {oldPrice && <span className="text-sm text-gray-400">{oldPrice}</span>}
           <span className="text-sm text-green-600 font-semibold">{price}</span>
         </div>
 
