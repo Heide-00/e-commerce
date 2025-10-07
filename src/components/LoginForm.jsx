@@ -9,7 +9,7 @@ export default function LoginForm() {
   const onSubmit = (formData) => {
     console.log("Gönderilen veri:", formData); 
 
-    dispatch(loginThunk(formData)); // rememberMe dahil tüm veri gönderiliyor
+    dispatch(loginThunk(formData)); 
   };
 
   return (
@@ -43,3 +43,5 @@ export default function LoginForm() {
     </form>
   );
 }
+
+
