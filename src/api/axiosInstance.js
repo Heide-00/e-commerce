@@ -22,3 +22,4 @@ export const clearAuthToken = () => {
 };
 
 export default axiosInstance;
+
