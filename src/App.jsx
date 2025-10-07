@@ -18,6 +18,8 @@ import LoginPage from "./pages/LoginPage";
 import axiosInstance, { setAuthToken, clearAuthToken } from "./api/axiosInstance";
 import { setUser } from "./store/actions/clientActions";
 import CategoryPage from "./pages/CategoryPage";
+import CheckoutPage from "./pages/CheckoutPage";
+
 
 function App() {
   const dispatch = useDispatch();
@@ -26,16 +28,16 @@ function App() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    // Token'ı axios header'a ekle
+    // Token'ı axios header'a ekleme
     setAuthToken(token);
 
     // Token doğrulama isteği
     axiosInstance.get("/verify")
       .then((res) => {
-        // Redux'a kullanıcıyı yaz
+        // Redux'a kullanıcıyı yazma
         dispatch(setUser(res.data.user));
 
-        // Token'ı yenile
+        // Token'ı yenileme
         localStorage.setItem("token", "mock-token-123");
         setAuthToken("mock-token-123");
       })
@@ -64,7 +66,8 @@ function App() {
             <Route path="/signup" component={SignupPage} />
             <Route path="/cart" component={CartPage} />
             <Route path="/login" component={LoginPage} />
-           </Switch>
+            <Route path="/checkout" component={CheckoutPage} />
+          </Switch>
            <Footer />
         </div>
       </div>
@@ -81,6 +84,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
