@@ -1,7 +1,6 @@
 import axiosInstance, { setAuthToken } from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 
-// Redux action creators
 export const setUser = (user) => ({
   type: 'SET_USER',
   payload: user
