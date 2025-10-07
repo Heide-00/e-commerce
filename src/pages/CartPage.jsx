@@ -104,7 +104,7 @@ export default function CartPage() {
 
             <div className="mt-6 text-right font-bold text-lg">
               Toplam Seçili Tutar:{" "}
-              <span className="text-blue-600">₺{total.toFixed(2)}</span>
+              <span className="text-blue-600">${total.toFixed(2)}</span>
             </div>
           </>
         )}
