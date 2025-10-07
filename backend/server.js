@@ -67,7 +67,7 @@ const categories = [
 
 //Ana sayfa testi
 app.get("/", (req, res) => {
-  res.send("✅ Backend çalışıyor");
+  res.send("Backend çalışıyor");
 });
 
 //Login
@@ -119,7 +119,7 @@ app.get("/products", (req, res) => {
   });
 });
 
-//Belirli ürün detayını döner
+//Belirli ürün detayını dönme
 app.get("/products/:productId", (req, res) => {
   const productId = Number(req.params.productId);
   const product = products.find((p) => p.id === productId);
@@ -131,16 +131,18 @@ app.get("/products/:productId", (req, res) => {
   }
 });
 
-//Kategorileri döner
+//Kategorileri dönme
 app.get("/categories", (req, res) => {
   res.status(200).json(categories);
 });
 
-/*SUNUCU BAŞLAT*/
+/*SUNUCUYU BAŞLAT*/
 
 app.listen(PORT, () => {
-  console.log(`🚀 Backend çalışıyor: http://localhost:${PORT}`);
+  console.log(`Backend çalışıyor: http://localhost:${PORT}`);
 });
+
+
 
               
  
