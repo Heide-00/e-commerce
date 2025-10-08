@@ -10,6 +10,9 @@ import AddressDropdown from '../components/AddressDropdown';
 import AddressForm from '../components/AddressForm';
 import PaymentOptions from '../components/PaymentOptions';
 import OrderSummary from '../components/OrderSummary';
+import SavedCardList from '../components/SavedCardList';
+import AddCardForm from '../components/AddCardForm';
+import InstallmentOptions from '../components/InstallmentOptions';
 
 export default function CheckoutPage() {
   const [addresses, setAddresses] = useState([]);
@@ -167,6 +170,20 @@ export default function CheckoutPage() {
         </div>
 
         <PaymentOptions selected={paymentType} onChange={setPaymentType} />
+
+{paymentType === 'card' && (
+  <div className="flex flex-col gap-6 mt-4">
+    <SavedCardList />
+    <AddCardForm onSuccess={() => console.log('Kart eklendi')} />
+    <InstallmentOptions totalAmount={cartTotal} />
+  </div>
+)}
+
+{paymentType === 'credit' && (
+  <div className="mt-4 text-sm text-gray-600">
+    Alışveriş kredisi ile ödeme seçildi.
+  </div>
+)}
       </div>
 
       <div className="self-start w-full max-w-md">
