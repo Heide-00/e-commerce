@@ -1,76 +1,55 @@
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const PORT = 3000;
+const SECRET_KEY = "commerce_secret";
 
 app.use(cors());
 app.use(express.json());
 
 /*MOCK VERİLER*/
-
-//Ürünler
-const products = Array.from({ length: 50 }, (_, i) => ({
-  id: i + 1,
-  name: `Ürün ${i + 1}`,
-  description: `Ürün ${i + 1} açıklaması`,
-  price: 100 + i,
-  stock: 50 + i,
-  store_id: 1,
-  category_id: (i % 5) + 1,
-  rating: (Math.random() * 2 + 3).toFixed(2),
-  sell_count: Math.floor(Math.random() * 500),
-  images: [
-    {
-      url: `https://cdn.dsmcdn.com/ty181/product/media/images/20210923/14/135755138/57457659/1/1_org_zoom.jpg`,
-      index: 0,
-    },
-  ],
-}));
-
-//Özel ürün: id 322
-products.push({
-  id: 322,
-  name: "Gri Regular Astar",
-  description: "Gri Regular Astar Detaylı Dokuma Blazer Ceket TWOAW20CE0316",
-  price: 461.99,
-  stock: 140,
-  store_id: 1,
-  category_id: 3,
-  rating: 3.64,
-  sell_count: 281,
-  images: [
-    {
-      url: "https://cdn.dsmcdn.com/ty181/product/media/images/20210923/14/135755138/57457659/1/1_org_zoom.jpg",
-      index: 0,
-    },
-  ],
-});
-
-//Kullanıcılar
 const users = [
   { email: "customer@commerce.com", password: "123456", role: "user" },
   { email: "store@commerce.com", password: "123456", role: "store" },
   { email: "admin@commerce.com", password: "123456", role: "admin" },
 ];
 
-//Kategoriler
-const categories = [
-  { id: 1, name: "bags", gender: "women", rating: 4.8, image: "bags.png" },
-  { id: 2, name: "belts", gender: "women", rating: 4.6, image: "belts.png" },
-  { id: 3, name: "cosmetics", gender: "women", rating: 4.9, image: "cosmetics.png" },
-  { id: 4, name: "bags", gender: "men", rating: 4.7, image: "bags.png" },
-  { id: 5, name: "hats", gender: "men", rating: 4.5, image: "hats.png" },
+let savedCards = [
+  {
+    id: "1",
+    card_no: "1234123412341234",
+    expire_month: 12,
+    expire_year: 2025,
+    name_on_card: "Ali Baş"
+  }
 ];
 
-/*ENDPOINTLER*/
+/*TOKEN DOĞRULAMA*/
+function verifyToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  if (!authHeader) return res.status(401).json({ message: "Token eksik" });
 
-//Ana sayfa testi
-app.get("/", (req, res) => {
-  res.send("Backend çalışıyor");
-});
+  const parts = authHeader.split(" ");
+  if (parts.length !== 2 || parts[0] !== "Bearer") {
+    return res.status(401).json({ message: "Token formatı hatalı" });
+  }
 
-//Login
+  const token = parts[1];
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) {
+      if (err.name === "TokenExpiredError") {
+        return res.status(403).json({ message: "Token süresi doldu" });
+      }
+      return res.status(403).json({ message: "Token geçersiz" });
+    }
+    req.user = user;
+    next();
+  });
+}
+
+/*LOGIN*/
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const user = users.find(
@@ -78,70 +57,85 @@ app.post("/login", (req, res) => {
   );
 
   if (user) {
-    res.status(200).json({ message: "Giriş başarılı", role: user.role });
+    const token = jwt.sign(
+      { email: user.email, role: user.role },
+      SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+    res.status(200).json({ message: "Giriş başarılı", token, role: user.role });
   } else {
     res.status(401).json({ message: "Geçersiz e-posta veya şifre" });
   }
 });
 
-//Tüm ürünleri döner (filtreleme + sıralama + sayfalama)
-app.get("/products", (req, res) => {
-  const { category, filter, sort, limit, offset } = req.query;
-  let result = [...products];
+/*KART İŞLEMLERİ*/
 
-  if (category) {
-    result = result.filter((p) => p.category_id === Number(category));
+//Kart Ekleme
+app.post("/user/card", verifyToken, (req, res) => {
+  const { card_no, expire_month, expire_year, name_on_card } = req.body;
+
+  if (!card_no || !expire_month || !expire_year || !name_on_card) {
+    return res.status(400).json({ message: "Eksik kart bilgisi" });
   }
 
-  if (filter) {
-    result = result.filter((p) =>
-      p.name.toLowerCase().includes(filter.toLowerCase())
-    );
-  }
+  const newCard = {
+    id: Date.now().toString(),
+    card_no,
+    expire_month,
+    expire_year,
+    name_on_card
+  };
 
-  if (sort) {
-    const [key, direction] = sort.split(":");
-    result.sort((a, b) => {
-      if (key === "price") {
-        return direction === "asc" ? a.price - b.price : b.price - a.price;
-      }
-      return 0;
-    });
-  }
-
-  const lim = parseInt(limit) || 25;
-  const off = parseInt(offset) || 0;
-  const paginated = result.slice(off, off + lim);
-
-  res.status(200).json({
-    total: result.length,
-    products: paginated,
-  });
+  savedCards.push(newCard);
+  res.status(200).json({ message: "Kart başarıyla kaydedildi", card: newCard });
 });
 
-//Belirli ürün detayını dönme
-app.get("/products/:productId", (req, res) => {
-  const productId = Number(req.params.productId);
-  const product = products.find((p) => p.id === productId);
-
-  if (product) {
-    res.status(200).json(product);
-  } else {
-    res.status(404).json({ message: "Ürün bulunamadı" });
-  }
+//Kartları Listeleme
+app.get("/user/card", verifyToken, (req, res) => {
+  res.status(200).json(savedCards);
 });
 
-//Kategorileri dönme
-app.get("/categories", (req, res) => {
-  res.status(200).json(categories);
+//Kart Güncelleme
+app.put("/user/card", verifyToken, (req, res) => {
+  const { id, card_no, expire_month, expire_year, name_on_card } = req.body;
+
+  if (!id || !card_no || !expire_month || !expire_year || !name_on_card) {
+    return res.status(400).json({ message: "Eksik kart bilgisi" });
+  }
+
+  const index = savedCards.findIndex(card => card.id === id);
+  if (index === -1) {
+    return res.status(404).json({ message: "Kart bulunamadı" });
+  }
+
+  savedCards[index] = {
+    ...savedCards[index],
+    card_no,
+    expire_month,
+    expire_year,
+    name_on_card
+  };
+
+  res.status(200).json({ message: "Kart başarıyla güncellendi", card: savedCards[index] });
+});
+
+//Kart Silme
+app.delete("/user/card/:cardId", verifyToken, (req, res) => {
+  const { cardId } = req.params;
+
+  const index = savedCards.findIndex(card => card.id === cardId);
+  if (index === -1) {
+    return res.status(404).json({ message: "Kart bulunamadı" });
+  }
+
+  savedCards.splice(index, 1);
+  res.status(200).json({ message: `Kart ${cardId} başarıyla silindi` });
 });
 
 /*SUNUCUYU BAŞLAT*/
-
 app.listen(PORT, () => {
   console.log(`Backend çalışıyor: http://localhost:${PORT}`);
 });
-
 
 
               
