@@ -62,3 +62,6 @@ export const loginThunk = (formData) => async (dispatch) => {
     toast.error('Giriş başarısız!');
   }
 };
+
+
+
