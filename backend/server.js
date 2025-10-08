@@ -132,6 +132,49 @@ app.delete("/user/card/:cardId", verifyToken, (req, res) => {
   res.status(200).json({ message: `Kart ${cardId} başarıyla silindi` });
 });
 
+/*SİPARİŞ İŞLEMLERİ*/
+
+//Sipariş Oluşturma
+app.post("/order", verifyToken, (req, res) => {
+  const {
+    address_id,
+    order_date,
+    card_no,
+    card_name,
+    card_expire_month,
+    card_expire_year,
+    card_ccv,
+    price,
+    products
+  } = req.body;
+
+  if (
+    !address_id || !order_date || !card_no || !card_name ||
+    !card_expire_month || !card_expire_year || !card_ccv ||
+    !price || !products || !Array.isArray(products)
+  ) {
+    return res.status(400).json({ message: "Eksik sipariş bilgisi" });
+  }
+
+  const newOrder = {
+    id: Date.now().toString(),
+    user: req.user.email,
+    address_id,
+    order_date,
+    card_no,
+    card_name,
+    card_expire_month,
+    card_expire_year,
+    card_ccv,
+    price,
+    products
+  };
+
+  console.log("Yeni sipariş:", newOrder);
+
+  return res.status(200).json({ message: "Sipariş başarıyla oluşturuldu", order: newOrder });
+});
+
 /*SUNUCUYU BAŞLAT*/
 app.listen(PORT, () => {
   console.log(`Backend çalışıyor: http://localhost:${PORT}`);
