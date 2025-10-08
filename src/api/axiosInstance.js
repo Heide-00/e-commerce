@@ -8,18 +8,54 @@ const axiosInstance = axios.create({
     "Cache-Control": "no-cache"
   },
   responseType: "json",
-  timeout: 10000
+  timeout: 20000
 });
 
-//Token'ı header'a ekleme
+//Token'ı her isteğe otomatik ekleme
+axiosInstance.interceptors.request.use((config) => {
+const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+if (token && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+//401 hatasını yakalama
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    const currentPath = window.location.pathname;
+
+    const isAuthError = status === 401;
+    const isLoginPage = currentPath === "/login";
+    const skipRedirectPaths = ["/settle", "/checkout", "/order"];
+
+    if (isAuthError && !isLoginPage && !skipRedirectPaths.includes(currentPath)) {
+      console.warn("Yetkisiz istek: Oturum geçersiz.");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+//Login sonrası token'ı kaydetme ve header'a ekleme
 export const setAuthToken = (token) => {
-  axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  localStorage.setItem("token", token);
+sessionStorage.setItem("token", token);
+axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
 
-//Token'ı header'dan silme
+//Logout sonrası token'ı temizleme
 export const clearAuthToken = () => {
+  localStorage.removeItem("token");
   delete axiosInstance.defaults.headers.common["Authorization"];
 };
 
 export default axiosInstance;
+
 
