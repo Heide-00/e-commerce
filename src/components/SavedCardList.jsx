@@ -3,7 +3,6 @@ import { getCards, deleteCard } from '../api/cardApi';
 
 export default function SavedCardList({ refresh, onRefreshed }) {
   const [cards, setCards] = useState([]);
-
   const fetchCards = async () => {
     try {
       const response = await getCards();
@@ -19,13 +18,13 @@ export default function SavedCardList({ refresh, onRefreshed }) {
   }, []);
 
   useEffect(() => {
-    if (refresh) fetchCards(); // Yenileme tetiklendiğinde
+    if (refresh) fetchCards(); 
   }, [refresh]);
 
   const handleDelete = async (id) => {
     try {
       await deleteCard(id);
-      fetchCards(); // Silme sonrası listeyi güncelle
+      fetchCards(); // Silme sonrası listeyi güncelleme
     } catch (error) {
       console.error('Kart silinemedi:', error);
     }
@@ -66,4 +65,7 @@ export default function SavedCardList({ refresh, onRefreshed }) {
     </div>
   );
 }
+
+
+
 
