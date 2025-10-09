@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route,Redirect } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TopBar from "./layout/TopBar";
@@ -19,7 +19,7 @@ import axiosInstance, { setAuthToken, clearAuthToken } from "./api/axiosInstance
 import { setUser } from "./store/actions/clientActions";
 import CategoryPage from "./pages/CategoryPage";
 import CheckoutPage from "./pages/CheckoutPage";
-
+import PreviousOrders from "./pages/PreviousOrders";
 
 function App() {
   const dispatch = useDispatch();
@@ -42,7 +42,7 @@ function App() {
         setAuthToken("mock-token-123");
       })
       .catch(() => {
-        // Token geçersizse temizle
+        // Token geçersizse temizleme
         localStorage.removeItem("token");
         clearAuthToken();
         dispatch({ type: "CLEAR_USER" });
@@ -67,7 +67,15 @@ function App() {
             <Route path="/cart" component={CartPage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/checkout" component={CheckoutPage} />
-          </Switch>
+            <Route
+            path="/orders"
+            render={() =>
+            localStorage.getItem("token")
+            ? <PreviousOrders token={localStorage.getItem("token")} />
+            : <Redirect to="/login" />
+   }
+  />
+           </Switch>
            <Footer />
         </div>
       </div>
